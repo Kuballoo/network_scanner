@@ -2,7 +2,6 @@
 
 import scapy.all as scapy
 import argparse
-import ipaddress
 
 def get_arguments():
     '''
@@ -18,15 +17,17 @@ def scan_mac(ip):
     '''
     Scans the network and retrieves MAC addresses of active devices.
     '''
+    client_list = []
+
     arp_frame = scapy.ARP(pdst=ip)
     ether_frame = scapy.Ether(dst='ff:ff:ff:ff:ff:ff')
     frame = ether_frame / arp_frame
     answered_list = scapy.srp(frame, timeout=1, verbose=False)[0]
-    
-    client_list = []
+
     for element in answered_list:
         client_list.append({'ip': element[1].psrc, 'mac': element[1].hwsrc})
     return client_list
+
 
 def print_results(result_list):
     '''
@@ -34,7 +35,7 @@ def print_results(result_list):
     '''
     print(f'IP\t\t\tMAC Address\n{"-"*50}')
     for client in result_list:
-        print(f'{client['ip']}\t\t{client['mac']}')
+        print(f'{client["ip"]}\t\t{client["mac"]}')
 
 if __name__ == '__main__':
     options = get_arguments()
